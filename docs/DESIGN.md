@@ -32,9 +32,9 @@ The project is **not** a military website, military simulator, tactical equipmen
 
 ---
 
-# Color Schemes
+## Color Schemes
 
-## Dark Theme — Dark Field
+### Dark Theme — Dark Field
 
 Dark theme is the primary visual identity of the project.
 
@@ -49,7 +49,7 @@ It should feel:
 
 The dark theme uses deep green-gray surfaces with olive, sand, rust, and steel accents.
 
-### Base Surfaces
+#### Base Surfaces
 
 | Token              | Value     | Usage                            |
 | ------------------ | --------- | -------------------------------- |
@@ -63,7 +63,7 @@ Do not use pure black as the primary background.
 
 The base colors should feel slightly organic and outdoor-oriented rather than neutral gray.
 
-### Dark Typography
+#### Dark Typography
 
 | Token            | Value     | Usage                               |
 | ---------------- | --------- | ----------------------------------- |
@@ -75,7 +75,7 @@ Avoid pure white text where softer contrast is sufficient.
 
 ---
 
-# Light Theme — Sand Field
+### Light Theme — Sand Field
 
 The light theme must not be a generic white and gray interface.
 
@@ -96,7 +96,7 @@ The light theme should resemble:
 
 It must remain visually connected to the Dark Field theme.
 
-## Base Surfaces
+#### Base Surfaces
 
 | Token              | Value     | Usage                            |
 | ------------------ | --------- | -------------------------------- |
@@ -112,7 +112,7 @@ Pure white may be used for elevated surfaces where additional separation is requ
 
 The overall background should have a subtle warm or natural tint.
 
-## Light Typography
+#### Light Typography
 
 | Token            | Value     | Usage                               |
 | ---------------- | --------- | ----------------------------------- |
@@ -126,7 +126,7 @@ Avoid pure black unless required for accessibility.
 
 ---
 
-# Brand Colors
+## Brand Colors
 
 Brand colors are shared between both color schemes.
 
@@ -134,7 +134,7 @@ Their shades may adapt to the current color scheme, but their semantic meaning m
 
 ---
 
-## Field
+### Field
 
 Primary brand color.
 
@@ -157,7 +157,7 @@ Field is the dominant accent color.
 
 Do not apply Field to every component.
 
-### Visual association
+#### Visual association
 
 * olive;
 * vegetation;
@@ -167,7 +167,7 @@ Do not apply Field to every component.
 
 ---
 
-## Sand
+### Sand
 
 Secondary brand color.
 
@@ -185,7 +185,7 @@ Use for:
 * badges;
 * supporting visual elements.
 
-### Visual association
+#### Visual association
 
 * sand;
 * equipment;
@@ -195,7 +195,7 @@ Use for:
 
 ---
 
-## Rust
+### Rust
 
 Accent color.
 
@@ -216,7 +216,7 @@ Rust should create visual energy without becoming the dominant color.
 
 ---
 
-## Steel
+### Steel
 
 Information color.
 
@@ -240,9 +240,9 @@ Avoid bright saturated blue.
 
 ---
 
-# Semantic Colors
+## Semantic Colors
 
-## Success
+### Success
 
 Base value:
 
@@ -259,7 +259,7 @@ Use for:
 
 ---
 
-## Warning
+### Warning
 
 Base value:
 
@@ -275,7 +275,7 @@ Use for:
 
 ---
 
-## Danger
+### Danger
 
 Base value:
 
@@ -294,7 +294,7 @@ Danger must not be used as a decorative accent.
 
 ---
 
-# Theme Relationship
+## Theme Relationship
 
 Dark and light themes must communicate the same semantic meaning.
 
@@ -323,9 +323,9 @@ The themes should differ primarily through:
 
 ---
 
-# Color Distribution
+## Color Distribution
 
-## Dark Theme
+### Dark Theme
 
 Target approximate distribution:
 
@@ -334,7 +334,7 @@ Target approximate distribution:
 * 10% — Sand and Steel;
 * 5% — Rust and semantic colors.
 
-## Light Theme
+### Light Theme
 
 Target approximate distribution:
 
@@ -349,7 +349,7 @@ The interface should feel colorful enough to maintain clear hierarchy, but restr
 
 ---
 
-# Visual Hierarchy
+## Visual Hierarchy
 
 The interface must have clear visual separation between:
 
@@ -371,7 +371,7 @@ The dark interface must not become a collection of visually merged dark rectangl
 
 ---
 
-# Visual Style
+## Visual Style
 
 The primary visual direction is:
 
@@ -405,7 +405,7 @@ Avoid:
 
 ---
 
-# Mantine UI Requirements
+## Mantine UI Requirements
 
 The project uses **Mantine UI** as the primary component library.
 
@@ -477,7 +477,7 @@ Prefer semantic and reusable color names.
 
 ---
 
-# Color Scheme Support
+## Color Scheme Support
 
 The application must support:
 
@@ -509,9 +509,9 @@ Components must adapt through the active color scheme and theme tokens.
 
 ---
 
-# Component Styling
+## Component Styling
 
-## Cards
+### Cards
 
 Cards should:
 
@@ -520,7 +520,7 @@ Cards should:
 * have moderate border radius;
 * support clear hover states when interactive.
 
-### Dark Theme
+#### Dark Theme
 
 Prefer separation through:
 
@@ -528,7 +528,7 @@ Prefer separation through:
 * subtle borders;
 * minimal elevation.
 
-### Light Theme
+#### Light Theme
 
 Prefer separation through:
 
@@ -540,7 +540,7 @@ Avoid excessive floating-card effects.
 
 ---
 
-## Buttons
+### Buttons
 
 Primary actions should use `field`.
 
@@ -558,7 +558,7 @@ Do not create multiple competing primary actions within the same visual area.
 
 ---
 
-## Badges
+### Badges
 
 Badges are important for the forum and should communicate semantic information.
 
@@ -588,7 +588,7 @@ Do not use badges purely as decoration.
 
 ---
 
-## Navigation
+### Navigation
 
 Active navigation should be clearly visible in both themes.
 
@@ -603,11 +603,11 @@ Do not rely only on tiny color differences to indicate the active item.
 
 ---
 
-## Borders
+### Borders
 
 Borders should create structure without dominating the interface.
 
-### Dark Theme
+#### Dark Theme
 
 Use a muted green-gray border.
 
@@ -617,7 +617,7 @@ Base reference:
 #3A4136
 ```
 
-### Light Theme
+#### Light Theme
 
 Use a warm neutral border.
 
@@ -635,7 +635,7 @@ Avoid:
 
 ---
 
-# Interaction States
+## Interaction States
 
 Interactive elements must have clear states:
 
@@ -660,7 +660,7 @@ Avoid:
 
 ---
 
-# Layout
+## Layout
 
 Prefer:
 
@@ -686,7 +686,7 @@ Do not optimize the entire system around the current small scope of the forum.
 
 ---
 
-# Border Radius
+## Border Radius
 
 Use moderate rounding.
 
@@ -707,7 +707,7 @@ Pills are appropriate primarily for:
 
 ---
 
-# Shadows
+## Shadows
 
 Use shadows sparingly.
 
@@ -729,7 +729,7 @@ Avoid strong floating-card effects across the entire interface.
 
 ---
 
-# Accessibility
+## Accessibility
 
 Maintain sufficient contrast between:
 
@@ -753,7 +753,7 @@ Both light and dark themes must independently satisfy accessibility requirements
 
 ---
 
-# Design Decision Rules
+## Design Decision Rules
 
 When creating or modifying UI, follow this order of priority:
 
@@ -770,7 +770,7 @@ Before introducing a new visual pattern, check whether an existing component or 
 
 ---
 
-# Final Design Goal
+## Final Design Goal
 
 The final product should feel like:
 
