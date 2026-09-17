@@ -199,6 +199,74 @@ a {
   }
 }
 
+/* Раскладка раздела: слева общий блок пользователя, справа — контент.
+   Контент сам решает, делится ли он надвое (см. .sf-split): на странице
+   игр это список игр и статистика. Столбцы одной высоты, поэтому низ
+   колонок совпадает, а сами они дотягиваются до футера. */
+.sf-page-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  /* Колонки отбиты друг от друга сильнее, чем по вертикали */
+  column-gap: var(--mantine-spacing-xl);
+  row-gap: var(--mantine-spacing-md);
+  align-items: stretch;
+  min-height: 100%;
+}
+
+/* На узком экране сначала контент, потом блок пользователя */
+.sf-page-layout__content {
+  order: 1;
+}
+
+.sf-page-layout__aside {
+  order: 2;
+}
+
+/* Планшет: блок пользователя уходит в колонку слева. Места задаём явно,
+   потому что в разметке контент идёт первым — так на мобильном он сверху */
+@media (min-width: 48em) {
+  .sf-page-layout {
+    grid-template-columns: 280px minmax(0, 1fr);
+  }
+
+  .sf-page-layout__aside {
+    grid-column: 1;
+    grid-row: 1;
+    order: 1;
+  }
+
+  .sf-page-layout__content {
+    grid-column: 2;
+    grid-row: 1;
+    order: 2;
+  }
+}
+
+/* Десктоп: блок пользователя чуть шире, контенту больше места */
+@media (min-width: 75em) {
+  .sf-page-layout {
+    grid-template-columns: 300px minmax(0, 1fr);
+  }
+}
+
+/* Контент раздела может делиться надвое: основной блок и статистика
+   (на «Играх» — список игр и статистика по ним). На широком экране это
+   две колонки, ниже — одна, чтобы статистика уходила под список. */
+.sf-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--mantine-spacing-md);
+  align-items: stretch;
+  min-height: 100%;
+}
+
+@media (min-width: 75em) {
+  .sf-split {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    column-gap: var(--mantine-spacing-xl);
+  }
+}
+
 /* В Mantine есть только primary (text) и dimmed — вторичный уровень задаём явно */
 .sf-text-secondary {
   color: var(--sf-text-secondary);

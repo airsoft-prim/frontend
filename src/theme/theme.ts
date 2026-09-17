@@ -28,22 +28,43 @@ export const theme = createTheme({
   fontFamily: 'var(--sf-font-sans)',
   fontFamilyMonospace: 'var(--sf-font-mono)',
 
-  /* Умеренное скругление */
+  /* Умеренное скругление. Шкала целиком: Mantine отдаёт переменные только
+   * для перечисленных ступеней, и без xs/xl они пропали бы из темы.
+   * sm/md/lg совпадают с токенами (--sf-radius-sm 4px / --sf-radius 8px /
+   * --sf-radius-lg 12px), xs/xl сохраняют дефолтные 2px и 32px */
+  radius: {
+    xs: '0.125rem',
+    sm: '0.25rem',
+    md: '0.5rem',
+    lg: '0.75rem',
+    xl: '2rem',
+  },
   defaultRadius: 'md',
 
   respectReducedMotion: true,
+
+  /* Типографика на шаг крупнее дефолтной: служебные подписи и строки
+   * интерфейса заданы через `size="xs"` и `sm`, а дефолтные 12 и 14px
+   * на плотных паллетках читаются мелко */
+  fontSizes: {
+    xs: '0.8125rem', // 13px
+    sm: '0.9375rem', // 15px
+    md: '1.0625rem', // 17px
+    lg: '1.1875rem', // 19px
+    xl: '1.3125rem', // 21px
+  },
 
   headings: {
     fontFamily: 'var(--sf-font-sans)',
     fontWeight: '700',
     textWrap: 'balance',
     sizes: {
-      h1: { fontSize: '2rem', lineHeight: '1.25' },
-      h2: { fontSize: '1.625rem', lineHeight: '1.3' },
-      h3: { fontSize: '1.375rem', lineHeight: '1.35' },
-      h4: { fontSize: '1.125rem', lineHeight: '1.4' },
-      h5: { fontSize: '1rem', lineHeight: '1.5' },
-      h6: { fontSize: '0.875rem', lineHeight: '1.5' },
+      h1: { fontSize: '2.125rem', lineHeight: '1.25' },
+      h2: { fontSize: '1.75rem', lineHeight: '1.3' },
+      h3: { fontSize: '1.5rem', lineHeight: '1.35' },
+      h4: { fontSize: '1.25rem', lineHeight: '1.4' },
+      h5: { fontSize: '1.0625rem', lineHeight: '1.5' },
+      h6: { fontSize: '0.9375rem', lineHeight: '1.5' },
     },
   },
 
