@@ -2,13 +2,16 @@
  * Применяет цветовую схему до первой отрисовки: без этого тёмная тема
  * на мгновение мигает светлым фоном.
  *
- * Подключается блокирующим <script> в <head> обеих страниц. Тело совпадает
- * с тем, что рендерит ColorSchemeScript из @mantine/core, но выполняется
- * раньше, чем React успевает смонтироваться.
+ * Подключается блокирующим <script> в <head> каждой страницы. Схема лежит
+ * в cookie (см. src/theme/color-scheme-manager.ts) — здесь она читается
+ * напрямую, потому что до React никакого менеджера ещё нет.
  */
 (function () {
   try {
-    var stored = window.localStorage.getItem('mantine-color-scheme-value');
+    var found = document.cookie.match(
+      /(?:^|;\s*)mantine-color-scheme-value=([^;]*)/
+    );
+    var stored = found ? found[1] : null;
     var scheme =
       stored === 'light' || stored === 'dark' || stored === 'auto'
         ? stored
@@ -25,6 +28,6 @@
       computed
     );
   } catch {
-    // Приватный режим без localStorage — остаётся схема из атрибута в разметке
+    // Cookie недоступны — остаётся схема из атрибута в разметке
   }
 })();

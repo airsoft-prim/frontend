@@ -3,13 +3,15 @@ import { useReducedMotion } from '@mantine/hooks';
 import { IconMoon, IconSun } from '@tabler/icons-react';
 
 /**
- * Переключение Dark Field / Sand Field. Схема хранится средствами Mantine
- * в localStorage, поэтому выбор переживает переход между страницами MPA.
+ * Переключение Dark Field / Sand Field. Схема лежит в cookie, поэтому выбор
+ * переживает переход между страницами MPA и уходит на сервер вместе с запросом
+ * (см. src/theme/color-scheme-manager.ts).
  *
  * Смена схемы идёт плавно: на время перехода на <html> появляется класс
- * sf-theme-transition, и цвета перетекают друг в друга (стили — в
- * src/styles/global.css). Класс живёт только на время переключения: постоянные
- * transition-ы на всех элементах тормозят отрисовку и оживляют загрузку.
+ * sf-theme-transition — поверхности перетекают, а текст и границы меняются
+ * в середине перехода (стили — в src/styles/global.css). Класс живёт только
+ * на время переключения: постоянные transition-ы на всех элементах тормозят
+ * отрисовку и оживляют загрузку.
  *
  * keepTransitions здесь обязателен: по умолчанию Mantine на каждый setColorScheme
  * вставляет style с `*, ::before, ::after { transition: none !important }` и снимает

@@ -51,29 +51,35 @@ a {
    ставит ColorSchemeToggle (src/components/ColorSchemeToggle.tsx). Постоянные
    transition-ы на всех элементах здесь не подходят: они тормозят отрисовку
    и оживляют первую загрузку страницы, а нужен один эффект — перетекание
-   цветов между схемами. */
+   цветов между схемами.
+
+   Перетекают только поверхности и тени. Текст и границы переключаются
+   мгновенно в середине перехода: схемы меняются местами, и при перетекании
+   цвет текста в какой-то момент совпал бы с цветом подложки — надпись на
+   несколько кадров исчезла бы. В середине подложка уже серая, и оба цвета
+   текста читаются на ней одинаково хорошо. */
 :root.sf-theme-transition *,
 :root.sf-theme-transition *::before,
 :root.sf-theme-transition *::after {
   transition:
     background-color var(--sf-transition-theme),
-    border-color var(--sf-transition-theme),
     box-shadow var(--sf-transition-theme),
-    color var(--sf-transition-theme),
-    fill var(--sf-transition-theme),
-    stroke var(--sf-transition-theme);
+    border-color 0s var(--sf-theme-swap),
+    color 0s var(--sf-theme-swap),
+    fill 0s var(--sf-theme-swap),
+    stroke 0s var(--sf-theme-swap);
 }
 
 /* Солнце и луна лежат друг на друге и меняются местами поворотом: нажатие
    связано с тем, что произошло на странице, но иконка не «прыгает» между
-   состояниями. Её цвет уходит вместе со схемой, а прозрачность и поворот —
-   быстрее, поэтому селектор начинается с :root: так он перекрывает по
-   приоритету общий переход смены схемы. */
+   состояниями. Цвет уходит вместе со схемой — как у текста, мгновенно
+   в середине перехода, — а прозрачность и поворот быстрее. Селектор с :root
+   нужен, чтобы перекрывать по приоритету общий переход смены схемы. */
 :root .sf-scheme-icon > svg {
   transition:
-    color var(--sf-transition-theme),
+    color 0s var(--sf-theme-swap),
     opacity var(--sf-transition-slow),
-    stroke var(--sf-transition-theme),
+    stroke 0s var(--sf-theme-swap),
     transform var(--sf-transition-slow);
 }
 

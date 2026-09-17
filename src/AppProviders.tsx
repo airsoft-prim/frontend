@@ -13,6 +13,7 @@ import '@mantine/notifications/styles.css';
 import './styles/tokens.css';
 import './styles/global.css';
 
+import { colorSchemeManager } from './theme/color-scheme-manager';
 import { cssVariablesResolver } from './theme/css-variables-resolver';
 import { theme } from './theme/theme';
 
@@ -24,6 +25,7 @@ export function AppProviders({ children }: AppProvidersProps) {
   return (
     <MantineProvider
       theme={theme}
+      colorSchemeManager={colorSchemeManager}
       cssVariablesResolver={cssVariablesResolver}
       defaultColorScheme="dark"
     >

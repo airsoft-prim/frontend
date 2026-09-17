@@ -507,11 +507,19 @@ Do not create separate component systems for dark and light themes.
 
 Components must adapt through the active color scheme and theme tokens.
 
-Switching between schemes must be smooth: surfaces, typography, borders and
-shadows cross-fade instead of changing in a single frame.
+The chosen scheme must be stored in a cookie: it survives navigation between
+pages of the multi-page application and travels to the server with each request.
+The cookie is the single source of truth for the chosen scheme.
+
+Switching between schemes must be smooth: surfaces and shadows cross-fade
+instead of changing in a single frame.
 
 Prefer one short transition (about 240 ms) that is enabled only while the scheme
 changes, so the rest of the interface keeps its own timing.
+
+Typography and borders must switch in the middle of that transition rather than
+fade with the surfaces: in a fade the text color passes through the surface
+color, and the text disappears for a few frames.
 
 The switch must respect `prefers-reduced-motion` and become instant there.
 

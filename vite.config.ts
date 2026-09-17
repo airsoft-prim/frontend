@@ -1,10 +1,11 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync, renameSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
 import react from '@vitejs/plugin-react';
 import {
   defineConfig,
   normalizePath,
   type Connect,
+  type Logger,
   type Plugin,
 } from 'vite';
 
@@ -18,15 +19,38 @@ import {
 const ROOT_REDIRECT = '/games/';
 
 /**
- * Страница в каталоге живёт по адресу /games/, а вариант без слеша dev-сервер
- * отдаёт как 404. Статический хостинг нормализует это сам (nginx и Apache
- * добавляют слеш к каталогу), поэтому повторяем поведение локально.
+ * Исходники страниц лежат в html/: корень проекта читается как проект, а не
+ * как список разделов сайта. Каталог внутри html/ задаёт адрес страницы —
+ * html/games/index.html отвечает на /games/.
+ *
+ * Сборка кладёт страницы в корень dist (плагин flattenPages), а dev-сервер
+ * переводит адрес в путь внутри html/ (плагин mpaRouting): адреса разделов
+ * не должны зависеть от того, где лежат исходники.
  */
-function mpaRedirects(): Plugin {
+const PAGES_DIR = 'html';
+
+/** Файл страницы по адресу: /games/ -> <root>/<prefix>/games/index.html */
+function pageFile(rootPath: string, prefix: string, pathname: string) {
+  // Пути сравниваем в одном формате: Vite нормализует root прямыми слешами,
+  // а path.resolve на Windows возвращает обратные.
+  return normalizePath(resolve(rootPath, prefix, `.${pathname}/index.html`));
+}
+
+/**
+ * Правила адресов: `/` уводит на /games/, `/games` — на `/games/`, а в dev
+ * страницы отдаются из html/.
+ *
+ * Редирект со `/` в продакшене отдаёт веб-сервер (nginx: `location = / { return
+ * 301 /games/; }`) — так клиент получает настоящий 301 без лишнего документа.
+ * Вариант без слеша статический хостинг нормализует сам (nginx и Apache
+ * добавляют слеш к каталогу), а dev-сервер отдал бы 404. Повторяем оба правила
+ * локально, чтобы адреса совпадали с боевыми.
+ */
+function mpaRouting(): Plugin {
   const createMiddleware =
-    (rootPath: string): Connect.NextHandleFunction =>
+    (rootPath: string, prefix: string): Connect.NextHandleFunction =>
     (request, response, next) => {
-      const [pathname] = (request.url ?? '').split('?');
+      const [pathname, query] = (request.url ?? '').split('?');
 
       if (!pathname) {
         next();
@@ -39,35 +63,46 @@ function mpaRedirects(): Plugin {
         return;
       }
 
-      if (pathname.endsWith('/')) {
-        next();
+      /* Адресуют либо раздел (/games/), либо сам файл страницы
+         (/games/index.html) — это одна и та же страница */
+      const pointsToFile = pathname.endsWith('/index.html');
+      const section = pointsToFile
+        ? pathname.slice(0, -'index.html'.length)
+        : pathname;
+      const indexFile = pageFile(rootPath, prefix, section);
+      const isPage = indexFile.startsWith(rootPath) && existsSync(indexFile);
+
+      if (!pointsToFile && !pathname.endsWith('/')) {
+        if (!isPage) {
+          next();
+          return;
+        }
+
+        response.writeHead(301, { Location: `${pathname}/` });
+        response.end();
         return;
       }
 
-      // Пути сравниваем в одном формате: Vite нормализует root прямыми слешами,
-      // а path.resolve на Windows возвращает обратные.
-      const indexFile = normalizePath(
-        resolve(rootPath, `.${pathname}/index.html`)
-      );
-
-      if (!indexFile.startsWith(rootPath) || !existsSync(indexFile)) {
-        next();
-        return;
+      // В собранном сайте страницы уже лежат по своим адресам — переводить нечего
+      if (prefix && isPage) {
+        request.url = `/${prefix}${pathname}${query ? `?${query}` : ''}`;
       }
 
-      response.writeHead(301, { Location: `${pathname}/` });
-      response.end();
+      next();
     };
 
   return {
-    name: 'mpa-redirects',
+    name: 'mpa-routing',
     configureServer(server) {
-      server.middlewares.use(createMiddleware(normalizePath(server.config.root)));
+      server.middlewares.use(
+        createMiddleware(normalizePath(server.config.root), PAGES_DIR)
+      );
     },
     configurePreviewServer(server) {
       server.middlewares.use(
         createMiddleware(
-          normalizePath(resolve(server.config.root, server.config.build.outDir))
+          normalizePath(resolve(server.config.root, server.config.build.outDir)),
+          ''
         )
       );
     },
@@ -75,13 +110,59 @@ function mpaRedirects(): Plugin {
 }
 
 /**
+ * Сборка кладёт страницы в dist/html/<раздел>/index.html — так выходит из пути
+ * исходников. Переносим их в корень сборки: адреса разделов остаются прежними
+ * (/games/, а не /html/games/).
+ *
+ * Переносим файлы после записи, а не переименовываем в generateBundle: Rolldown
+ * (сборщик Vite 8) правку объекта bundle не поддерживает — присваивание в него
+ * игнорируется. Отчёт сборки печатает имена до переноса, поэтому сам перенос
+ * отмечаем в логе строкой.
+ */
+function flattenPages(): Plugin {
+  let logger: Logger | undefined;
+
+  return {
+    name: 'flatten-pages',
+    enforce: 'post',
+    configResolved(config) {
+      logger = config.logger;
+    },
+    writeBundle(options) {
+      const outDir = options.dir;
+
+      if (!outDir) {
+        this.error('Неизвестен каталог сборки — страницы некуда переносить');
+      }
+
+      const from = resolve(outDir, PAGES_DIR);
+
+      if (!existsSync(from)) {
+        return;
+      }
+
+      const moved = readdirSync(from);
+
+      for (const entry of moved) {
+        renameSync(resolve(from, entry), resolve(outDir, entry));
+      }
+
+      rmSync(from, { recursive: true, force: true });
+      logger?.info(
+        `страницы перенесены из ${PAGES_DIR}/ в корень сборки: ${moved.join(', ')}`
+      );
+    },
+  };
+}
+
+/**
  * Проект собирается как MPA: каждая страница — отдельный HTML-вход со своей
- * точкой монтирования. Новый раздел = новый каталог с index.html и запись
- * в input ниже. Корневой index.html не собирается: `/` — это редирект.
+ * точкой монтирования. Новый раздел = новый каталог в html/ и запись
+ * в input ниже. Корневого index.html нет: `/` — это редирект.
  */
 export default defineConfig({
   appType: 'mpa',
-  plugins: [react(), mpaRedirects()],
+  plugins: [react(), mpaRouting(), flattenPages()],
 
   /**
    * Vite отдаёт в клиентский код только переменные с префиксом `VITE_`.
@@ -117,17 +198,23 @@ export default defineConfig({
     rollupOptions: {
       input: {
         /* Разделы портала */
-        games: resolve(import.meta.dirname, 'games/index.html'),
-        committees: resolve(import.meta.dirname, 'committees/index.html'),
-        teams: resolve(import.meta.dirname, 'teams/index.html'),
-        users: resolve(import.meta.dirname, 'users/index.html'),
+        games: resolve(import.meta.dirname, `${PAGES_DIR}/games/index.html`),
+        committees: resolve(
+          import.meta.dirname,
+          `${PAGES_DIR}/committees/index.html`
+        ),
+        teams: resolve(import.meta.dirname, `${PAGES_DIR}/teams/index.html`),
+        users: resolve(import.meta.dirname, `${PAGES_DIR}/users/index.html`),
 
         /* Документы и служебные страницы */
-        agreement: resolve(import.meta.dirname, 'agreement/index.html'),
-        policy: resolve(import.meta.dirname, 'policy/index.html'),
+        agreement: resolve(
+          import.meta.dirname,
+          `${PAGES_DIR}/agreement/index.html`
+        ),
+        policy: resolve(import.meta.dirname, `${PAGES_DIR}/policy/index.html`),
         'design-example': resolve(
           import.meta.dirname,
-          'design-example/index.html'
+          `${PAGES_DIR}/design-example/index.html`
         ),
       },
     },
