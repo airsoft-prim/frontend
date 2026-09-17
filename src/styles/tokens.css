@@ -6,6 +6,37 @@
  * Схема берётся из Mantine: <html data-mantine-color-scheme="dark|light">.
  */
 
+/* Текстовые токены зарегистрированы: анимировать можно только зарегистрированную
+ * переменную, а смену схемы анимирует ровно одна такая переменная на :root
+ * (см. .sf-theme-transition в global.css). Переход на color у каждого элемента
+ * дал бы тот же цвет, но color наследуется — задержка перехода копилась бы
+ * на каждом уровне вложенности, и цвет глубоко в дереве менялся бы позже фона.
+ *
+ * Начальное значение — тёмная схема: она схема по умолчанию. */
+@property --sf-text-primary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #e8e6df;
+}
+
+@property --sf-text-secondary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #a8ada2;
+}
+
+@property --sf-text-muted {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #737a70;
+}
+
+@property --sf-accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #b4c487;
+}
+
 :root {
   /* Брендовые цвета общие для обеих схем — их смысл не меняется */
   --sf-field: #6b7d3a;
@@ -46,7 +77,7 @@
    * переход длиннее, иначе перетекание цветов читается как рывок */
   --sf-transition-theme: 240ms ease;
 
-  /* Момент, когда внутри смены схемы меняются текст и границы. Половина
+  /* Момент, когда внутри смены схемы меняется текст. Половина
    * от --sf-transition-theme: если перетекать будет и текст, в середине
    * перехода он совпадёт по цвету с подложкой и на мгновение исчезнет */
   --sf-theme-swap: 120ms;

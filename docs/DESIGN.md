@@ -517,9 +517,14 @@ instead of changing in a single frame.
 Prefer one short transition (about 240 ms) that is enabled only while the scheme
 changes, so the rest of the interface keeps its own timing.
 
-Typography and borders must switch in the middle of that transition rather than
-fade with the surfaces: in a fade the text color passes through the surface
-color, and the text disappears for a few frames.
+Typography must switch in the middle of that transition rather than fade with the
+surfaces: in a fade the text color passes through the surface color, and the text
+disappears for a few frames.
+
+Switch it once, on the root, by animating the text tokens themselves. A transition
+on `color` per element accumulates its delay down the tree, because `color` is
+inherited: each level starts its own transition when the parent's value arrives,
+and text deep in the tree changes noticeably later than the surfaces.
 
 The switch must respect `prefers-reduced-motion` and become instant there.
 
