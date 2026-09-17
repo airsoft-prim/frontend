@@ -133,6 +133,9 @@ const NEWS_ICON_STYLE = {
  * 2/3 и 1/3: карточка игрока `2 1 0`, события `1 1 0`. Разделы внутри
  * карточки расходятся по высоте, а в событиях высоту делят строки — поэтому
  * ссылка «Все объявления» всегда прижата к низу карточки.
+ *
+ * Строки ведут в ленту событий («Все объявления» → `/feed/`): это полный
+ * список игр и объявлений, а в карточке помещается только последние.
  */
 export function SiteAside() {
   return (
@@ -196,7 +199,10 @@ export function SiteAside() {
           ))}
 
           <Group justify="center" mt="auto">
-            <PalletAction icon={<IconArrowRight size={14} stroke={1.6} />}>
+            <PalletAction
+              href="/feed/"
+              icon={<IconArrowRight size={14} stroke={1.6} />}
+            >
               Все объявления
             </PalletAction>
           </Group>

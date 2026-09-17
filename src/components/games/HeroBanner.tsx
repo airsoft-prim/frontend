@@ -62,7 +62,7 @@ export function HeroBanner() {
           <Group mt={4}>
             <Button
               component="a"
-              href="/agreement/"
+              href="/rules/"
               color="field"
               leftSection={<IconBook size={18} stroke={1.6} />}
             >

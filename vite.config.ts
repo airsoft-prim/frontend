@@ -205,12 +205,14 @@ export default defineConfig({
         ),
         teams: resolve(import.meta.dirname, `${PAGES_DIR}/teams/index.html`),
         users: resolve(import.meta.dirname, `${PAGES_DIR}/users/index.html`),
+        feed: resolve(import.meta.dirname, `${PAGES_DIR}/feed/index.html`),
 
         /* Документы и служебные страницы */
         agreement: resolve(
           import.meta.dirname,
           `${PAGES_DIR}/agreement/index.html`
         ),
+        rules: resolve(import.meta.dirname, `${PAGES_DIR}/rules/index.html`),
         policy: resolve(import.meta.dirname, `${PAGES_DIR}/policy/index.html`),
         'design-example': resolve(
           import.meta.dirname,

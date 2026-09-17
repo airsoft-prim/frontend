@@ -67,20 +67,50 @@ export function Pallet({ title, icon, grow, children }: PalletProps) {
 interface PalletActionProps {
   children: ReactNode;
   icon?: ReactNode;
+  /**
+   * Адрес раздела, куда ведёт действие. Без него действие остаётся
+   * кнопкой-заглушкой: раздел ещё не создан, вести некуда.
+   */
+  href?: string;
 }
 
 /**
- * Действие «Все …» в шапке паллетки. Пока это не ссылка: разделов, куда
- * вести, ещё нет — появится API, появится и адрес.
+ * Действие «Все …» в подвале паллетки.
+ *
+ * С `href` это обычная ссылка: такой раздел уже есть, и ссылка получает
+ * адрес в разметке (клавиатура, средняя кнопка мыши и копирование адреса
+ * работают как обычно). Без `href` остаётся кнопкой-заглушкой — для списков,
+ * у которых раздела пока нет.
  */
-export function PalletAction({ children, icon }: PalletActionProps) {
+export function PalletAction({ children, icon, href }: PalletActionProps) {
+  const style = {
+    color: 'var(--sf-text-secondary)',
+    display: 'flex',
+    gap: 6,
+  } as const;
+
+  if (href) {
+    return (
+      <Anchor
+        component="a"
+        href={href}
+        size="xs"
+        underline="hover"
+        style={style}
+      >
+        {children}
+        {icon}
+      </Anchor>
+    );
+  }
+
   return (
     <Anchor
       component="button"
       type="button"
       size="xs"
       underline="hover"
-      style={{ color: 'var(--sf-text-secondary)', display: 'flex', gap: 6 }}
+      style={style}
     >
       {children}
       {icon}
