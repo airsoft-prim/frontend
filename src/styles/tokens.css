@@ -1,0 +1,113 @@
+/**
+ * Токены проекта — прямая проекция docs/DESIGN.md в CSS-переменные.
+ * Пространство имён `--sf-*` (Sand Field / Field) отделено от переменных Mantine,
+ * чтобы значения дизайн-системы нельзя было перепутать со служебными.
+ *
+ * Схема берётся из Mantine: <html data-mantine-color-scheme="dark|light">.
+ */
+
+:root {
+  /* Брендовые цвета общие для обеих схем — их смысл не меняется */
+  --sf-field: #6b7d3a;
+  --sf-sand: #b89b62;
+  --sf-rust: #c96a3d;
+  --sf-steel: #4f7c91;
+
+  /* Семантика статусов */
+  --sf-success: #4e8b57;
+  --sf-warning: #c99832;
+  --sf-danger: #b85450;
+
+  /* Типографика: системный стек, без внешних шрифтовых зависимостей */
+  --sf-font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, 'Noto Sans', sans-serif;
+  --sf-font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+    'Liberation Mono', monospace;
+
+  /* Умеренное скругление: современно, но не «мягко-игрушечно» */
+  --sf-radius-sm: 4px;
+  --sf-radius: 8px;
+  --sf-radius-lg: 12px;
+  --sf-radius-pill: 999px;
+
+  /* Единый боковой отступ страницы: раскладка во всю ширину, но с полями,
+   * которые растут вместе с экраном */
+  --sf-gutter: clamp(16px, 1.5vw, 32px);
+
+  /* Длина черты под активной вкладкой: одна на все пункты навигации,
+   * чтобы индикатор не зависел от длины подписи */
+  --sf-tab-indicator: 64px;
+
+  /* Единый ритм переходов */
+  --sf-transition: 120ms ease;
+  --sf-transition-slow: 180ms ease;
+
+  /* Смена схемы — событие всей страницы, а не отклик на наведение:
+   * переход длиннее, иначе перетекание цветов читается как рывок */
+  --sf-transition-theme: 240ms ease;
+}
+
+/* Dark Field — основная визуальная идентичность проекта */
+:root[data-mantine-color-scheme='dark'] {
+  --sf-background: #171a17;
+  --sf-surface: #20241f;
+  --sf-surface-elevated: #292e27;
+  --sf-surface-hover: #30362d;
+  --sf-border: #3a4136;
+
+  --sf-text-primary: #e8e6df;
+  --sf-text-secondary: #a8ada2;
+  --sf-text-muted: #737a70;
+
+  /* Акцентный текст по схеме: светлая олива на тёмной поверхности (8.4:1) */
+  --sf-accent: #b4c487;
+
+  /* Тёмная тема предпочитает контраст поверхностей и границы, а не тени */
+  --sf-shadow-sm: none;
+  --sf-shadow: 0 2px 6px rgb(0 0 0 / 32%);
+  --sf-shadow-lg: 0 12px 32px rgb(0 0 0 / 45%);
+
+  --sf-focus: #b4c487;
+  --sf-selection: rgb(107 125 58 / 38%);
+}
+
+/* Sand Field — тёплая светлая схема: полевой блокнот + карта местности */
+:root[data-mantine-color-scheme='light'] {
+  --sf-background: #e9e7de;
+  --sf-surface: #f5f3eb;
+  --sf-surface-elevated: #ffffff;
+  --sf-surface-hover: #eceadf;
+  --sf-border: #d4d1c5;
+
+  --sf-text-primary: #252820;
+  --sf-text-secondary: #5e6259;
+  --sf-text-muted: #85887f;
+
+  /* Акцентный текст по схеме: глубокая олива на песочной поверхности (5.7:1) */
+  --sf-accent: #576630;
+
+  /* В светлой теме допустима мягкая тень с тёплым подтоном */
+  --sf-shadow-sm: 0 1px 2px rgb(46 42 32 / 6%);
+  --sf-shadow: 0 4px 14px rgb(46 42 32 / 8%);
+  --sf-shadow-lg: 0 16px 40px rgb(46 42 32 / 12%);
+
+  --sf-focus: #576630;
+  --sf-selection: rgb(107 125 58 / 24%);
+}
+
+/* Тень Mantine тоже привязываем к схеме: по умолчанию она общая для светлой и тёмной */
+:root[data-mantine-color-scheme='dark'] {
+  --mantine-shadow-xs: none;
+  --mantine-shadow-sm: var(--sf-shadow-sm);
+  --mantine-shadow-md: var(--sf-shadow);
+  --mantine-shadow-lg: var(--sf-shadow);
+  --mantine-shadow-xl: var(--sf-shadow-lg);
+}
+
+:root[data-mantine-color-scheme='light'] {
+  --mantine-shadow-xs: 0 1px 2px rgb(46 42 32 / 5%);
+  --mantine-shadow-sm: var(--sf-shadow-sm);
+  --mantine-shadow-md: var(--sf-shadow);
+  --mantine-shadow-lg: var(--sf-shadow);
+  --mantine-shadow-xl: var(--sf-shadow-lg);
+}

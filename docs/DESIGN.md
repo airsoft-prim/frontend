@@ -507,6 +507,14 @@ Do not create separate component systems for dark and light themes.
 
 Components must adapt through the active color scheme and theme tokens.
 
+Switching between schemes must be smooth: surfaces, typography, borders and
+shadows cross-fade instead of changing in a single frame.
+
+Prefer one short transition (about 240 ms) that is enabled only while the scheme
+changes, so the rest of the interface keeps its own timing.
+
+The switch must respect `prefers-reduced-motion` and become instant there.
+
 ---
 
 ## Component Styling

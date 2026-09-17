@@ -1,0 +1,338 @@
+/**
+ * Базовая типографика, состояния и небольшой набор утилит проекта.
+ * Всё, что относится к компонентам, живёт в теме Mantine (src/theme),
+ * здесь — только то, что нельзя выразить через props.
+ */
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+/* Колонка на всю высоту экрана: футер прижат к низу даже на коротких страницах */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+body {
+  background-color: var(--sf-background);
+  color: var(--sf-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Кириллица не любит отрицательный межбуквенный интервал — только корректировка для крупных заголовков */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--sf-text-primary);
+  letter-spacing: -0.01em;
+}
+
+h1,
+h2 {
+  letter-spacing: -0.02em;
+}
+
+a {
+  transition: color var(--sf-transition);
+}
+
+/* Плавная смена цветовой схемы.
+   Класс sf-theme-transition висит на <html> ровно на время переключения — его
+   ставит ColorSchemeToggle (src/components/ColorSchemeToggle.tsx). Постоянные
+   transition-ы на всех элементах здесь не подходят: они тормозят отрисовку
+   и оживляют первую загрузку страницы, а нужен один эффект — перетекание
+   цветов между схемами. */
+:root.sf-theme-transition *,
+:root.sf-theme-transition *::before,
+:root.sf-theme-transition *::after {
+  transition:
+    background-color var(--sf-transition-theme),
+    border-color var(--sf-transition-theme),
+    box-shadow var(--sf-transition-theme),
+    color var(--sf-transition-theme),
+    fill var(--sf-transition-theme),
+    stroke var(--sf-transition-theme);
+}
+
+/* Солнце и луна лежат друг на друге и меняются местами поворотом: нажатие
+   связано с тем, что произошло на странице, но иконка не «прыгает» между
+   состояниями. Её цвет уходит вместе со схемой, а прозрачность и поворот —
+   быстрее, поэтому селектор начинается с :root: так он перекрывает по
+   приоритету общий переход смены схемы. */
+:root .sf-scheme-icon > svg {
+  transition:
+    color var(--sf-transition-theme),
+    opacity var(--sf-transition-slow),
+    stroke var(--sf-transition-theme),
+    transform var(--sf-transition-slow);
+}
+
+.sf-scheme-icon {
+  position: relative;
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.sf-scheme-icon > svg {
+  position: absolute;
+  inset: 0;
+  transform-origin: center;
+}
+
+/* Умолчание — тёмная схема: она же стоит в разметке страниц */
+.sf-scheme-icon-sun {
+  opacity: 1;
+  transform: none;
+}
+
+.sf-scheme-icon-moon {
+  opacity: 0;
+  transform: rotate(-60deg) scale(0.6);
+}
+
+:root[data-mantine-color-scheme='light'] .sf-scheme-icon-sun {
+  opacity: 0;
+  transform: rotate(60deg) scale(0.6);
+}
+
+:root[data-mantine-color-scheme='light'] .sf-scheme-icon-moon {
+  opacity: 1;
+  transform: none;
+}
+
+::selection {
+  background-color: var(--sf-selection);
+  color: var(--sf-text-primary);
+}
+
+/* Скроллбар остаётся частью поверхности, а не отдельным ярким элементом */
+* {
+  scrollbar-color: var(--sf-surface-hover) transparent;
+  scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: var(--sf-radius-pill);
+  background-clip: content-box;
+  background-color: var(--sf-surface-hover);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--sf-border);
+}
+
+/* Фокус: заметная обводка в обеих схемах, чтобы состояние не терялось */
+:focus-visible {
+  outline: 2px solid var(--sf-focus);
+  outline-offset: 2px;
+}
+
+/* Утилиты для собственных контейнеров; Mantine-компоненты оформляются темой */
+.sf-surface {
+  background-color: var(--sf-surface);
+}
+
+.sf-surface-elevated {
+  background-color: var(--sf-surface-elevated);
+  box-shadow: var(--sf-shadow);
+}
+
+.sf-hairline {
+  border-bottom: 1px solid var(--sf-border);
+}
+
+/* Полоса из трёх зон: края по бокам, середина — ровно по центру страницы.
+   Боковые колонки одинаковой ширины, поэтому центр средней зоны не зависит
+   от того, что стоит по краям (в отличие от flex + space-between). */
+.sf-grid-3col {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  column-gap: var(--mantine-spacing-md);
+}
+
+/* Узкий экран: зоны становятся столбцом по центру */
+@media (max-width: 47.99em) {
+  .sf-grid-3col.sf-grid-3col-stack {
+    grid-template-columns: 1fr;
+    row-gap: var(--mantine-spacing-xs);
+  }
+
+  .sf-grid-3col.sf-grid-3col-stack > * {
+    justify-self: center;
+  }
+}
+
+/* В Mantine есть только primary (text) и dimmed — вторичный уровень задаём явно */
+.sf-text-secondary {
+  color: var(--sf-text-secondary);
+}
+
+.sf-meta {
+  color: var(--sf-text-muted);
+  font-size: var(--mantine-font-size-xs);
+}
+
+.sf-tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Документ, свёрстанный из Markdown (см. components/MarkdownDocument.tsx).
+   Markdown отдаёт обычные теги — до них props Mantine не достают, поэтому
+   длинный текст оформляется стилями. Класс отвечает только за типографику:
+   подложку и ширину листа задаёт SiteLayout (variant="document").
+   Поэтому вложенные блоки берут не цвет подложки, а следующий уровень
+   поверхности: иначе код и шапка таблицы слились бы с карточкой. */
+.sf-document {
+  color: var(--sf-text-primary);
+  font-size: var(--mantine-font-size-md);
+  /* Документ читают подряд, а не сканируют: межстрочный интервал больше,
+     чем в интерфейсе, и строка не должна упираться в края колонки */
+  line-height: 1.7;
+}
+
+/* Ритм документа: заголовок отделяет раздел сверху, блоки отбиваются снизу */
+.sf-document p,
+.sf-document ul,
+.sf-document ol,
+.sf-document table,
+.sf-document pre,
+.sf-document blockquote,
+.sf-document hr {
+  margin-block: 0 var(--mantine-spacing-md);
+}
+
+.sf-document h2 {
+  margin-block: var(--mantine-spacing-xl) var(--mantine-spacing-sm);
+  font-size: var(--mantine-font-size-lg);
+}
+
+.sf-document h3 {
+  margin-block: var(--mantine-spacing-lg) var(--mantine-spacing-xs);
+  font-size: var(--mantine-font-size-md);
+}
+
+/* Первый и последний блок не оставляют висячего отступа в колонке */
+.sf-document > :first-child {
+  margin-top: 0;
+}
+
+.sf-document > :last-child {
+  margin-bottom: 0;
+}
+
+.sf-document ul,
+.sf-document ol {
+  padding-inline-start: var(--mantine-spacing-lg);
+}
+
+.sf-document li + li {
+  margin-top: var(--mantine-spacing-xs);
+}
+
+.sf-document li::marker {
+  color: var(--sf-text-muted);
+}
+
+/* Вложенный список продолжает пункт, а не начинает новый блок */
+.sf-document li > ul,
+.sf-document li > ol,
+.sf-document li > p {
+  margin-block: var(--mantine-spacing-xs) 0;
+}
+
+.sf-document strong {
+  font-weight: 600;
+}
+
+/* Ссылка в тексте должна находиться взглядом, а не только при наведении */
+.sf-document a {
+  color: var(--sf-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.sf-document a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.sf-document blockquote {
+  padding-inline-start: var(--mantine-spacing-md);
+  border-inline-start: 3px solid var(--sf-border);
+  color: var(--sf-text-secondary);
+}
+
+.sf-document code {
+  padding: 0.1em 0.35em;
+  border-radius: var(--sf-radius-sm);
+  background-color: var(--sf-surface-elevated);
+  font-family: var(--sf-font-mono);
+  font-size: 0.9em;
+}
+
+.sf-document pre {
+  padding: var(--mantine-spacing-md);
+  border-radius: var(--sf-radius);
+  background-color: var(--sf-surface-elevated);
+  overflow-x: auto;
+}
+
+.sf-document pre code {
+  padding: 0;
+  background: none;
+}
+
+.sf-document hr {
+  border: 0;
+  border-top: 1px solid var(--sf-border);
+}
+
+.sf-document table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--mantine-font-size-sm);
+}
+
+.sf-document th,
+.sf-document td {
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  border: 1px solid var(--sf-border);
+  text-align: start;
+}
+
+.sf-document th {
+  background-color: var(--sf-surface-elevated);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
