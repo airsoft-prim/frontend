@@ -26,8 +26,8 @@ import { LogoMark } from './LogoMark';
  */
 const NAV_ITEMS = [
   { label: 'Игры', href: '/games/', icon: IconCalendarCheck },
-  { label: 'Орг. комитеты', href: '/committees/', icon: IconUsers },
   { label: 'Команды', href: '/teams/', icon: IconShield },
+  { label: 'Орг. комитеты', href: '/committees/', icon: IconUsers },
   { label: 'Пользователи', href: '/users/', icon: IconUser },
 ];
 
