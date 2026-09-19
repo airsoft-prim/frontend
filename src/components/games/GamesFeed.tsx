@@ -2,7 +2,6 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import {
   Box,
-  Button,
   Card,
   Group,
   Pagination,
@@ -16,7 +15,6 @@ import {
 import {
   IconChevronRight,
   IconClock,
-  IconFilter,
   IconMapPin,
   IconUsers,
 } from '@tabler/icons-react';
@@ -193,6 +191,11 @@ function GameRowSkeleton() {
   );
 }
 
+/**
+ * Вкладки списка — он же единственный фильтр: статус игры (идёт регистрация,
+ * анонс, проведена). Отдельная кнопка «Фильтры» была лишней: по остальным
+ * полям список не фильтруют, а статус уже здесь.
+ */
 const TABS = [
   { value: 'open', label: 'Открыта регистрация' },
   { value: 'announced', label: 'Анонсированы' },
@@ -226,30 +229,18 @@ export function GamesFeed() {
         Игры
       </Title>
 
-      <Tabs value={tab} onChange={(value) => setTab(value ?? 'open')}>
-        <Group
-          justify="space-between"
-          align="center"
-          gap="sm"
-          mb="sm"
-          wrap="nowrap"
-        >
-          <Tabs.List>
-            {TABS.map(({ value, label }) => (
-              <Tabs.Tab key={value} value={value}>
-                {label}
-              </Tabs.Tab>
-            ))}
-          </Tabs.List>
-
-          <Button
-            variant="default"
-            size="xs"
-            leftSection={<IconFilter size={14} stroke={1.6} />}
-          >
-            Фильтры
-          </Button>
-        </Group>
+      <Tabs
+        value={tab}
+        onChange={(value) => setTab(value ?? 'open')}
+        mb="sm"
+      >
+        <Tabs.List>
+          {TABS.map(({ value, label }) => (
+            <Tabs.Tab key={value} value={value}>
+              {label}
+            </Tabs.Tab>
+          ))}
+        </Tabs.List>
       </Tabs>
 
       <Stack gap="sm">
