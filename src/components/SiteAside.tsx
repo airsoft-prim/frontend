@@ -178,7 +178,7 @@ export function SiteAside() {
       <Pallet
         title="События и объявления"
         grow={1}
-        icon={<IconSpeakerphone size={16} stroke={1.6} />}
+        icon={<IconSpeakerphone size={18} stroke={1.6} />}
       >
         {/* Строки делят высоту карточки: поэтому они выше, чем при обычном
          * шаге, а ссылка оказывается строго внизу — и не уезжает под прокрутку */}

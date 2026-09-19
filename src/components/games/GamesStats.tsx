@@ -83,7 +83,7 @@ export function GamesStats() {
       <Pallet
         title="Мои регистрации"
         grow={1}
-        icon={<IconCheck size={16} stroke={1.6} />}
+        icon={<IconCheck size={18} stroke={1.6} />}
       >
         <Stack gap={8} h="100%">
           {[0, 1, 2, 3, 4].map((row) => (
@@ -103,7 +103,7 @@ export function GamesStats() {
       <Pallet
         title="Топ 5 игр по участникам"
         grow={1}
-        icon={<IconUsers size={16} stroke={1.6} />}
+        icon={<IconUsers size={18} stroke={1.6} />}
       >
         {/* Подзаголовок и строки — соседи в одном столбце: строки делят
          * высоту карточки, а вложенный блок выталкивал бы их из области */}
@@ -120,7 +120,7 @@ export function GamesStats() {
       <Pallet
         title="Топ 5 игр по оценке"
         grow={1}
-        icon={<IconStar size={16} stroke={1.6} />}
+        icon={<IconStar size={18} stroke={1.6} />}
       >
         <Stack gap={8} h="100%">
           <Text className="sf-meta">За всё время</Text>

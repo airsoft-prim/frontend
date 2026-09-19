@@ -281,6 +281,44 @@ a {
   font-variant-numeric: tabular-nums;
 }
 
+/* Переход на страницу игры в строке списка (см.
+   components/games/GamesFeed.tsx). Это закладка у правого края карточки:
+   полоса во всю её высоту, отделённая вертикальной чертой, а не иконка —
+   по шеврону в 24px не попадали. Цифры регистрации и сроки остаются вне
+   зоны нажатия.
+
+   Наведение — классом, а не styles-пропом: тот раскладывается в inline-стили,
+   а инлайн не умеет `:hover`. Красится в Field Olive — основной цвет действия
+   темы: он один в обеих схемах, и белый шеврон по нему проходит AA, так что
+   заливка читается и в Dark Field, и в Sand Field. Появление плавное. */
+.sf-row-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Закладка занимает всю высоту карточки: отрицательные отступы перекрывают
+     её поля, поэтому черта идёт от границы до границы, а не обрывается
+     на отступе */
+  align-self: stretch;
+  margin-block: calc(-1 * var(--mantine-spacing-md));
+  /* Зона нажатия 44px плюс поле карточки: закладка доходит до её правого
+     края, а отрицательный отступ не даёт ей растянуть строку */
+  width: calc(44px + var(--mantine-spacing-md));
+  margin-inline-end: calc(-1 * var(--mantine-spacing-md));
+  /* Черта отделяет зону от цифр: тот же цвет, что у границ карточек.
+     Справа радиус повторяет скругление карточки */
+  border-inline-start: 1px solid var(--sf-border);
+  border-radius: 0 var(--sf-radius) var(--sf-radius) 0;
+  color: var(--sf-text-secondary);
+  transition:
+    background-color var(--sf-transition),
+    color var(--sf-transition);
+}
+
+.sf-row-action:hover {
+  background-color: var(--sf-field);
+  color: var(--mantine-color-white);
+}
+
 /* Документ, свёрстанный из Markdown (см. components/MarkdownDocument.tsx).
    Markdown отдаёт обычные теги — до них props Mantine не достают, поэтому
    длинный текст оформляется стилями. Класс отвечает только за типографику:

@@ -23,17 +23,32 @@ export function SkeletonLines({
   );
 }
 
+interface SkeletonChipProps {
+  width?: number;
+  /**
+   * Высота плашки: по умолчанию 24px — размер бейджа под текст 15px.
+   * Строка игры берёт меньше, потому что место в её колонке отдано названию.
+   */
+  height?: number;
+}
+
 /** Плашка-бейдж: теги игры, роли, статусы */
-export function SkeletonChip({ width = 64 }: { width?: number }) {
-  return <Skeleton height={24} width={width} radius="xl" />;
+export function SkeletonChip({ width = 64, height = 24 }: SkeletonChipProps) {
+  return <Skeleton height={height} width={width} radius="xl" />;
 }
 
 /** Несколько плашек подряд — например, теги «Сценарная игра», «Дневная» */
-export function SkeletonChips({ widths }: { widths: number[] }) {
+export function SkeletonChips({
+  widths,
+  height,
+}: {
+  widths: number[];
+  height?: number;
+}) {
   return (
     <Group gap={8}>
       {widths.map((width, index) => (
-        <SkeletonChip key={index} width={width} />
+        <SkeletonChip key={index} width={width} height={height} />
       ))}
     </Group>
   );
