@@ -70,6 +70,10 @@ function NavLinks({ pathname, onNavigate, tabs }: NavLinksProps) {
             aria-current={active ? 'page' : undefined}
             leftSection={<Icon size={18} stroke={1.6} />}
             onClick={onNavigate}
+            /* Подложка наведения и гашение подложки у активной вкладки —
+             * классом из global.css: styles-проп раскладывается в inline-стили,
+             * а инлайн не умеет `:hover` */
+            classNames={{ root: tabs ? 'sf-nav-tab' : undefined }}
             styles={{
               root: {
                 width: 'auto',
@@ -77,7 +81,9 @@ function NavLinks({ pathname, onNavigate, tabs }: NavLinksProps) {
                  * пунктами получаются ровными без отдельного gap */
                 paddingInline: 14,
                 paddingBlock: tabs ? 0 : 6,
-                borderRadius: tabs ? 0 : 'var(--sf-radius)',
+                /* Скругление вкладки шапки задаёт .sf-nav-tab: наведение
+                 * скругляет верхние углы, а inline-стиль перебил бы класс */
+                borderRadius: tabs ? undefined : 'var(--sf-radius)',
                 ...(tabs
                   ? {
                       height: '100%',
@@ -85,7 +91,6 @@ function NavLinks({ pathname, onNavigate, tabs }: NavLinksProps) {
                       color: active
                         ? 'var(--sf-text-primary)'
                         : 'var(--sf-text-secondary)',
-                      backgroundColor: active ? 'transparent' : undefined,
                       /* Черта — фон фиксированной ширины, а не рамка пункта:
                        * иначе её длина зависела бы от длины подписи. Так она
                        * одинакова у всех вкладок и прижата к низу шапки. */
