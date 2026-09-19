@@ -1,11 +1,13 @@
 import type { ReactNode } from 'react';
 import {
+  ActionIcon,
   Anchor,
   Box,
   Button,
   Card,
   Divider,
   Group,
+  Menu,
   Skeleton,
   Stack,
   Text,
@@ -14,32 +16,76 @@ import {
 import {
   IconArrowRight,
   IconChevronDown,
+  IconSettings,
   IconSpeakerphone,
   IconShield,
+  IconUser,
   IconUsers,
 } from '@tabler/icons-react';
 
 import { Pallet, PalletAction } from './Pallet';
 import { SkeletonLines } from './SkeletonBits';
 
-/** Профиль игрока: данные появятся вместе с авторизацией */
+/**
+ * Профиль игрока: аватар, позывной, роль и идентификатор — данные появятся
+ * вместе с авторизацией. Роль стоит отдельной плашкой под позывным: это бейдж
+ * (как в макете), а не ещё одна строка текста; ниже — служебная строка
+ * с идентификатором пользователя (hex-представление UUID).
+ *
+ * Аватар компактнее блока, потому что его ширина отдана позывному: полосы
+ * позывного и идентификатора занимают всю колонку, поэтому длинное имя
+ * не обрежется. Аватар — круг при любом размере (`50%`, а не шаг шкалы:
+ * у её ступеней радиус не равен половине стороны).
+ *
+ * Блок выровнен по верхнему краю: позывной начинается там же, где аватар,
+ * — как подпись организатора в строке игры. По центру позывной уезжал вниз
+ * и блок читался сверху пустым.
+ */
 function ProfileBlock() {
   return (
     <Group wrap="nowrap" align="flex-start" gap="md">
-      <Skeleton height={64} width={64} radius="xl" />
+      <Skeleton height={80} width={80} radius="50%" />
 
-      <Stack gap={8} style={{ flex: 1 }}>
-        <Skeleton height={13} width="70%" radius="sm" />
-        <Skeleton height={22} width={80} radius="xl" />
-        <Skeleton height={10} width="50%" radius="sm" />
+      <Stack gap={10} style={{ flex: 1, minWidth: 0 }}>
+        {/* Позывной: полоса во всю колонку — имя может быть длинным.
+         * Потолок нужен для мобильного: там колонка во всю ширину, и полоса
+         * в 500px обещала бы имя в полсотни знаков */}
+        <Skeleton height={21} width="100%" radius="sm" style={{ maxWidth: 200 }} />
+
+        <Skeleton height={26} width={88} radius="xl" />
+
+        {/* Идентификатор — служебная строка, поэтому ниже позывного;
+         * 32 шестнадцатеричных знака — примерно её длина */}
+        <Skeleton height={15} width="100%" radius="sm" style={{ maxWidth: 240 }} />
       </Stack>
 
-      <IconChevronDown
-        size={18}
-        stroke={1.6}
-        aria-hidden="true"
-        style={{ color: 'var(--sf-text-muted)' }}
-      />
+      {/* Шеврон — раскрывает меню поверх соседних карточек: оно рендерится
+       * в портале, поэтому не режется границами колонки. Подложка наведения
+       * нейтральная: действие второстепенное. Пункты «Профиль» и «Настройки»
+       * пока заглушки — таких страниц нет, поэтому они ничего не открывают
+       * (как действия паллеток без href). Значок у каждого пункта свой:
+       * он подсказывает, куда пункт ведёт, ещё до чтения подписи */}
+      <Menu position="bottom-end" withinPortal>
+        <Menu.Target>
+          <ActionIcon
+            variant="subtle"
+            color="gray"
+            aria-label="Меню профиля"
+          >
+            <IconChevronDown size={20} stroke={1.6} />
+          </ActionIcon>
+        </Menu.Target>
+
+        <Menu.Dropdown>
+          <Menu.Item leftSection={<IconUser size={16} stroke={1.6} />}>
+            Профиль
+          </Menu.Item>
+
+          <Menu.Item leftSection={<IconSettings size={16} stroke={1.6} />}>
+            Настройки
+          </Menu.Item>
+        </Menu.Dropdown>
+      </Menu>
     </Group>
   );
 }
