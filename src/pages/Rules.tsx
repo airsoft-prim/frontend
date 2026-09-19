@@ -2,12 +2,12 @@ import { Text, Title } from '@mantine/core';
 
 import { MarkdownDocument } from '../components/MarkdownDocument';
 import { SiteLayout } from '../components/SiteLayout';
-import documentText from '../content/rules.md?raw';
+import documentText from '../content/documents/rules.md?raw';
 
 /**
  * Правила страйкбола: как ведут себя на полигоне.
  *
- * Текст документа — `src/content/rules.md`: это обычный Markdown, который
+ * Текст документа — `src/content/documents/rules.md`: это обычный Markdown, который
  * правится отдельно от кода. Подпись и заголовок остаются в разметке, чтобы
  * страница совпадала с остальными документами портала («Правила
  * использования», «Политика конфиденциальности»).

@@ -2,12 +2,12 @@ import { Text, Title } from '@mantine/core';
 
 import { MarkdownDocument } from '../components/MarkdownDocument';
 import { SiteLayout } from '../components/SiteLayout';
-import documentText from '../content/agreement.md?raw';
+import documentText from '../content/documents/agreement.md?raw';
 
 /**
  * Правила использования портала.
  *
- * Текст документа — `src/content/agreement.md`: это обычный Markdown, который
+ * Текст документа — `src/content/documents/agreement.md`: это обычный Markdown, который
  * правится отдельно от кода. Подпись и заголовок остаются в разметке, чтобы
  * страница совпадала с остальными разделами портала.
  */
