@@ -287,6 +287,10 @@ a {
    по шеврону в 24px не попадали. Цифры регистрации и сроки остаются вне
    зоны нажатия.
 
+   Поле карточки закладка берёт из `--sf-row-padding` (по умолчанию — `md`,
+   как у строки игры): строка может ужать свои поля и закладка останется
+   выровненной по её границам, а не выйдет за них.
+
    Наведение — классом, а не styles-пропом: тот раскладывается в inline-стили,
    а инлайн не умеет `:hover`. Красится в Field Olive — основной цвет действия
    темы: он один в обеих схемах, и белый шеврон по нему проходит AA, так что
@@ -299,11 +303,11 @@ a {
      её поля, поэтому черта идёт от границы до границы, а не обрывается
      на отступе */
   align-self: stretch;
-  margin-block: calc(-1 * var(--mantine-spacing-md));
+  margin-block: calc(-1 * var(--sf-row-padding, var(--mantine-spacing-md)));
   /* Зона нажатия 44px плюс поле карточки: закладка доходит до её правого
      края, а отрицательный отступ не даёт ей растянуть строку */
-  width: calc(44px + var(--mantine-spacing-md));
-  margin-inline-end: calc(-1 * var(--mantine-spacing-md));
+  width: calc(44px + var(--sf-row-padding, var(--mantine-spacing-md)));
+  margin-inline-end: calc(-1 * var(--sf-row-padding, var(--mantine-spacing-md)));
   /* Черта отделяет зону от цифр: тот же цвет, что у границ карточек.
      Справа радиус повторяет скругление карточки */
   border-inline-start: 1px solid var(--sf-border);
