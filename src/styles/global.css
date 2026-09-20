@@ -267,6 +267,89 @@ a {
   }
 }
 
+/* Раскладка страницы профиля: слева карточки игрока (шапка, биография,
+   статистика), справа паспорт и контакты.
+
+   Ширина правой колонки задана в пикселях, а не долей: в паспорте рядом
+   стоят QR-код и поле номера из 32 знаков, и от их ширины зависит, влезет
+   ли номер целиком. Доля растянула бы паспорт на широком экране и сжала
+   его на узком.
+
+   Колонки растянуты на одну высоту: низ карточек совпадает, а сами они
+   дотягиваются до футера — доли высоты распределяют карточки внутри
+   колонок. */
+.sf-profile-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--mantine-spacing-md);
+  align-items: stretch;
+  min-height: 100%;
+}
+
+@media (min-width: 75em) {
+  .sf-profile-layout {
+    grid-template-columns: minmax(0, 1fr) 420px;
+  }
+}
+
+/* Вкладки профиля — полоса в нижней части шапки: черта сверху отделяет их
+   от аватара, а отметка активной вкладки лежит на нижней границе карточки.
+   Разметку, состояния и клавиатуру держит Tabs из Mantine; здесь только вид.
+
+   У варианта по умолчанию активная вкладка обведена рамкой и под списком
+   проходит его черта (псевдоэлемент), а в макете активная вкладка отмечена
+   полосой снизу. Поэтому рамку снимаем, черту списка гасим и рисуем
+   границу сверху. */
+.sf-profile-tabs {
+  border-top: 1px solid var(--sf-border);
+  /* Вкладки отбиты друг от друга: без зазора полоса активной вкладки
+   * упирается в подпись соседней */
+  gap: var(--mantine-spacing-xs);
+}
+
+.sf-profile-tabs::before {
+  content: none;
+}
+
+.sf-profile-tab {
+  /* Псевдоэлемент отметки позиционируется по вкладке */
+  position: relative;
+  border: 0;
+  border-radius: 0;
+  padding: 18px 25px;
+  color: var(--sf-text-secondary);
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 600;
+  transition: color var(--sf-transition);
+}
+
+.sf-profile-tab:hover {
+  background-color: transparent;
+  color: var(--sf-text-primary);
+}
+
+/* Отметка — псевдоэлемент, а не border-bottom: рамка сдвигала бы подпись
+   на свою ширину и вкладка меняла бы размер при переключении */
+.sf-profile-tab::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 3px;
+  background-color: var(--sf-field);
+  opacity: 0;
+  transition: opacity var(--sf-transition);
+}
+
+.sf-profile-tab:where([data-active]) {
+  background-color: transparent;
+  color: var(--sf-text-primary);
+}
+
+.sf-profile-tab:where([data-active])::after {
+  opacity: 1;
+}
+
 /* В Mantine есть только primary (text) и dimmed — вторичный уровень задаём явно */
 .sf-text-secondary {
   color: var(--sf-text-secondary);
@@ -305,8 +388,13 @@ a {
   align-self: stretch;
   margin-block: calc(-1 * var(--sf-row-padding, var(--mantine-spacing-md)));
   /* Зона нажатия 44px плюс поле карточки: закладка доходит до её правого
-     края, а отрицательный отступ не даёт ей растянуть строку */
-  width: calc(44px + var(--sf-row-padding, var(--mantine-spacing-md)));
+     края, а отрицательный отступ не даёт ей растянуть строку.
+     Ширину можно сузить переменной: компактные микрокарточки профиля берут
+     24px — на 54px шеврон занимал четверть карточки, а 24px это ещё и
+     нижняя граница площади нажатия (WCAG 2.5.8) */
+  width: calc(
+    var(--sf-row-action-width, 44px) + var(--sf-row-padding, var(--mantine-spacing-md))
+  );
   margin-inline-end: calc(-1 * var(--sf-row-padding, var(--mantine-spacing-md)));
   /* Черта отделяет зону от цифр: тот же цвет, что у границ карточек.
      Справа радиус повторяет скругление карточки */
@@ -479,6 +567,80 @@ a {
 .sf-document th {
   background-color: var(--sf-surface-elevated);
   font-weight: 600;
+}
+
+/*
+  Текст игрока — Markdown в карточке профиля. Приёмы те же, что у документа
+  раздела (см. sf-document), но кегль интерфейсный: это реплика в карточке,
+  а не страница правил.
+*/
+.sf-markdown {
+  color: var(--sf-text-secondary);
+  font-size: var(--mantine-font-size-sm);
+  line-height: 1.55;
+}
+
+/* Блоки отбиваются друг от друга, последний не оставляет висячего отступа */
+.sf-markdown > :where(p, ul, ol, blockquote, pre, table):not(:last-child) {
+  margin-block-end: var(--mantine-spacing-sm);
+}
+
+.sf-markdown h2,
+.sf-markdown h3 {
+  margin-block: var(--mantine-spacing-md) var(--mantine-spacing-xs);
+  color: var(--sf-text-primary);
+  font-size: var(--mantine-font-size-md);
+}
+
+.sf-markdown h3 {
+  font-size: var(--mantine-font-size-sm);
+}
+
+/* Первый блок не отбивается от верха карточки */
+.sf-markdown > :first-child {
+  margin-top: 0;
+}
+
+.sf-markdown ul,
+.sf-markdown ol {
+  padding-inline-start: var(--mantine-spacing-lg);
+}
+
+.sf-markdown li + li {
+  margin-top: var(--mantine-spacing-xs);
+}
+
+.sf-markdown li::marker {
+  color: var(--sf-text-muted);
+}
+
+/* Приветствие выделяют жирным: оно становится главным в абзаце */
+.sf-markdown strong {
+  color: var(--sf-text-primary);
+  font-weight: 600;
+}
+
+/* Ссылка в тексте должна находиться взглядом, а не только при наведении */
+.sf-markdown a {
+  color: var(--sf-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Цитата — голос игрока: черта полевая, как у цитаты в макете */
+.sf-markdown blockquote {
+  padding-inline-start: var(--mantine-spacing-md);
+  border-inline-start: 3px solid var(--sf-field);
+}
+
+/* Подпись автора идёт под цитатой почти вплотную: это не новый абзац,
+   а подпись. У цитаты в один блок подписи нет — она остаётся текстом */
+.sf-markdown blockquote > :not(:last-child) {
+  margin-block-end: 4px;
+}
+
+.sf-markdown blockquote > :last-child:not(:only-child) {
+  color: var(--sf-text-muted);
 }
 
 @media (prefers-reduced-motion: reduce) {
