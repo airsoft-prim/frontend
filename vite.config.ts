@@ -63,6 +63,20 @@ function mpaRouting(): Plugin {
         return;
       }
 
+      /* Профиль игрока: /users/{hex} отдаёт ту же страницу, что и /me/.
+         Принимаем любой 32-значный hex без проверки существования игрока —
+         валидация появится вместе с API. Адрес переводим в /me/: в dev страница
+         лежит в html/me/index.html, в собранном сайте — в dist/me/index.html.
+         Адрес в браузере не меняется, поэтому страница читает hex
+         из window.location.pathname. */
+      if (/^\/users\/[0-9a-f]{32}\/?$/i.test(pathname)) {
+        request.url = `${prefix ? `/${prefix}` : ''}/me/${
+          query ? `?${query}` : ''
+        }`;
+        next();
+        return;
+      }
+
       /* Адресуют либо раздел (/games/), либо сам файл страницы
          (/games/index.html) — это одна и та же страница */
       const pointsToFile = pathname.endsWith('/index.html');
@@ -205,6 +219,7 @@ export default defineConfig({
         ),
         teams: resolve(import.meta.dirname, `${PAGES_DIR}/teams/index.html`),
         users: resolve(import.meta.dirname, `${PAGES_DIR}/users/index.html`),
+        me: resolve(import.meta.dirname, `${PAGES_DIR}/me/index.html`),
         feed: resolve(import.meta.dirname, `${PAGES_DIR}/feed/index.html`),
 
         /* Документы и служебные страницы */
