@@ -63,14 +63,16 @@ function mpaRouting(): Plugin {
         return;
       }
 
-      /* Профиль игрока: /users/{hex} отдаёт ту же страницу, что и /me/.
-         Принимаем любой 32-значный hex без проверки существования игрока —
-         валидация появится вместе с API. Адрес переводим в /me/: в dev страница
-         лежит в html/me/index.html, в собранном сайте — в dist/me/index.html.
+      /* Профиль игрока: /users/{hex} отдаёт ту же страницу, что и /users/me/ —
+         это один документ, а игрок приходит из адреса («me» — свой профиль,
+         hex — чужой; см. ProfilePassport). Принимаем любой 32-значный hex
+         без проверки существования игрока — валидация появится вместе с API.
+         Запрос переводим в /users/me/: в dev страница лежит
+         в html/users/me/index.html, в собранном сайте — в dist/users/me/index.html.
          Адрес в браузере не меняется, поэтому страница читает hex
          из window.location.pathname. */
       if (/^\/users\/[0-9a-f]{32}\/?$/i.test(pathname)) {
-        request.url = `${prefix ? `/${prefix}` : ''}/me/${
+        request.url = `${prefix ? `/${prefix}` : ''}/users/me/${
           query ? `?${query}` : ''
         }`;
         next();
@@ -219,7 +221,12 @@ export default defineConfig({
         ),
         teams: resolve(import.meta.dirname, `${PAGES_DIR}/teams/index.html`),
         users: resolve(import.meta.dirname, `${PAGES_DIR}/users/index.html`),
-        me: resolve(import.meta.dirname, `${PAGES_DIR}/me/index.html`),
+        /* Профиль игрока — вложен в раздел «Пользователи»: адрес задаёт путь
+           файла, а ключ (с дефисом) только называет чанк */
+        'users-me': resolve(
+          import.meta.dirname,
+          `${PAGES_DIR}/users/me/index.html`
+        ),
         feed: resolve(import.meta.dirname, `${PAGES_DIR}/feed/index.html`),
 
         /* Документы и служебные страницы */

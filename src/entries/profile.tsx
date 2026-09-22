@@ -2,12 +2,12 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { AppProviders } from '../AppProviders';
-import { Me } from '../pages/Me';
+import { Profile } from '../pages/Profile';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AppProviders>
-      <Me />
+      <Profile />
     </AppProviders>
   </StrictMode>,
 );

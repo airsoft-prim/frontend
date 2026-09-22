@@ -27,12 +27,6 @@ import { LogoMark } from './LogoMark';
 interface NavItem {
   label: string;
   href: string;
-  /**
-   * Дополнительные адреса, которые тоже принадлежат разделу. Свой профиль
-   * открывается и по `/me/` — это шорткат к `/users/{hex}`, поэтому вкладка
-   * раздела остаётся активной и на нём.
-   */
-  aliases?: string[];
   icon: typeof IconUser;
 }
 
@@ -40,12 +34,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Игры', href: '/games/', icon: IconCalendarCheck },
   { label: 'Команды', href: '/teams/', icon: IconShield },
   { label: 'Орг. Группы', href: '/committees/', icon: IconUsers },
-  {
-    label: 'Пользователи',
-    href: '/users/',
-    aliases: ['/me/'],
-    icon: IconUser,
-  },
+  { label: 'Пользователи', href: '/users/', icon: IconUser },
 ];
 
 const SEARCH_PLACEHOLDER = 'Поиск по играм, командам, пользователям...';
@@ -63,26 +52,24 @@ interface NavLinksProps {
   tabs?: boolean;
 }
 
-/** Активен ли раздел: /games/, /games и /games/123 — всё это «Игры». */
-function isActivePath(
-  pathname: string,
-  href: string,
-  aliases?: readonly string[]
-) {
+/**
+ * Активен ли раздел: /games/, /games и /games/123 — всё это «Игры».
+ * Профиль лежит внутри раздела, поэтому /users/me/, как и /users/{hex},
+ * держит вкладку «Пользователи» активной без отдельных правил.
+ */
+function isActivePath(pathname: string, href: string) {
   const path = pathname.replace(/\/+$/, '');
+  const target = href.replace(/\/+$/, '');
 
-  return [href, ...(aliases ?? [])].some((address) => {
-    const target = address.replace(/\/+$/, '');
-    return path === target || path.startsWith(`${target}/`);
-  });
+  return path === target || path.startsWith(`${target}/`);
 }
 
 /** Один список ссылок на два места: горизонтальная навигация и меню в Drawer */
 function NavLinks({ pathname, onNavigate, tabs }: NavLinksProps) {
   return (
     <>
-      {NAV_ITEMS.map(({ label, href, aliases, icon: Icon }) => {
-        const active = isActivePath(pathname, href, aliases);
+      {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
+        const active = isActivePath(pathname, href);
 
         return (
           <NavLink
@@ -146,8 +133,8 @@ export function SiteHeader() {
   const pathname = getPathname();
   /* «Переключатель вкладок» нужен только на страницах-разделах.
    * В документах (правила, политика, дизайн-пример) он лишний. */
-  const isSectionPage = NAV_ITEMS.some(({ href, aliases }) =>
-    isActivePath(pathname, href, aliases)
+  const isSectionPage = NAV_ITEMS.some(({ href }) =>
+    isActivePath(pathname, href)
   );
 
   return (
